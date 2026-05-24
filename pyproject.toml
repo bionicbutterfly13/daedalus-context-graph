@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "daedalus-context-graph"
+version = "0.1.0a0"
+description = "Pre-alpha skeleton for Daedalus Context Graph, a reusable context graph kernel for AI agents and context engineering."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+  { name = "Dr. Mani Saint-Victor" },
+  { name = "BionicButterfly13" }
+]
+maintainers = [
+  { name = "Dr. Mani Saint-Victor" },
+  { name = "BionicButterfly13" }
+]
+keywords = [
+  "context-graph",
+  "knowledge-graph",
+  "neo4j",
+  "ai-agents",
+  "provenance",
+  "decision-traces",
+  "context-engineering",
+  "calibration-graph"
+]
+classifiers = [
+  "Development Status :: 2 - Pre-Alpha",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Typing :: Typed"
+]
+dependencies = []
+
+[project.optional-dependencies]
+neo4j = ["neo4j>=5.20"]
+dev = ["pytest>=8.0", "build>=1.2", "twine>=5.0"]
+
+[project.urls]
+Homepage = "https://BionicButterfly.me"
+Documentation = "https://BionicButterfly.me"
+Source = "https://github.com/bionicbutterfly13/daedalus-context-graph"
+Issues = "https://github.com/bionicbutterfly13/daedalus-context-graph/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+daedalus_context_graph = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
