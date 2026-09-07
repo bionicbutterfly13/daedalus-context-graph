@@ -121,7 +121,7 @@ DecisionTrace
   ├─ artifact_refs ──▶ ArtifactRef (uri, kind, title)
   ├─ precedent_citations (decision ids)
   ├─ requested_by / decided_by / policy_version / procedure_ref
-  ├─ requested_at / decided_at / valid_at   (UTC ISO-8601)
+  ├─ requested_at / decided_at / valid_at   (default: UTC ISO-8601; any non-blank string accepted)
   ├─ inputs, outcome, explanation
   ├─ confidence (0.0 to 1.0), review_status
   └─ provenance (free-form mapping)
@@ -134,9 +134,12 @@ required at validation: `decision_id`, `decision_type`, `entity_refs`,
 `valid_at`.
 
 `EvidenceStandard` and `WorkflowVersion` carry **expert calibration**: the
-thresholds a domain expert applies before trusting an output. They are versioned
-with `valid_from` / `valid_until` so a decision can always be judged against the
-standard that was in force when it was made.
+thresholds a domain expert applies before trusting an output. A
+`WorkflowVersion` is stamped with `valid_from` / `valid_until` so a decision can
+be judged against the standard in force when it was made. The kernel stores and
+validates these records; it does not yet enforce that a decision satisfies its
+workflow's evidence standards or select the historically applicable workflow
+(both are roadmap items).
 
 ## Store boundary
 
@@ -161,7 +164,7 @@ tests and for any backend implementation. A Neo4j store is the next backend.
                │ official MemoryProvider contract
 ┌──────────────▼───────────────┐
 │  hermes-neo4j-context-graph  │  Hermes adapter (separate package)
-│  provider id:                │  sync_turn → queued graph writes
+│  Hermes provider name:       │  sync_turn → queued graph writes
 │  neo4j_context_graph         │  prefetch  → bounded decision-first recall
 │                              │  tools     → read-only search / read
 └──────────────┬───────────────┘
@@ -179,8 +182,10 @@ tests and for any backend implementation. A Neo4j store is the next backend.
 The kernel deliberately does not import Hermes. `daedalus_context_graph.hermes`
 holds two bridge helpers only:
 
-- `provider_id()` returns `"neo4j_context_memory"`, the provider id the current
-  local adapter uses, so the kernel and adapter agree on naming.
+- `provider_id()` returns `"neo4j_context_memory"`, the provenance tag written
+  into traces derived from Hermes memory writes. It is not the Hermes
+  `memory.provider` name (`neo4j_context_graph`); the two will be unified when
+  the adapter moves onto this kernel.
 - `trace_from_memory_write(...)` turns a Hermes built-in memory write into a
   low-resolution `DecisionTrace` (type `memory-write`, confidence 0.5,
   provenance `hermes-memory-write`) so nothing an agent remembers is lost from
